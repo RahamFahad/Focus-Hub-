@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Focus Hub Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <!-- 1. AUTHENTICATION MODAL -->
+    <div id="login-modal" class="modal-overlay">
+        <div class="modal-box">
+            <h2 id="auth-title">Sign Up to Focus Hub</h2>
+            <p id="auth-subtitle">Create an account to track your daily goals.</p>
+            
+            <form onsubmit="handleAuthSubmit(event)">
+                <input type="text" id="auth-name" placeholder="Full Name" required>
+                <input type="email" id="auth-email" placeholder="Gmail Address (e.g. user@gmail.com)" required>
+                <input type="password" id="auth-password" placeholder="Password (Min. 6 characters)" required minlength="6">
+                
+                <button type="submit" id="auth-btn">Sign Up & Send Code</button>
+            </form>
+
+            <button type="button" onclick="continueAsGuest()" style="background-color: #27272a; color: #fafafa; margin-top: 10px;">Continue as Guest 🚀</button>
+
+            <p style="margin-top: 15px; font-size: 13px;">
+                <span id="toggle-text">Already have an account?</span> 
+                <a href="#" onclick="toggleAuthMode(event)" id="toggle-link" style="color: #f59e0b; font-weight: 600; text-decoration: none;">Log In</a>
+            </p>
+        </div>
+    </div>
+
+    <!-- 2. EMAIL VERIFICATION MODAL -->
+    <div id="verify-modal" class="modal-overlay" style="display: none;">
+        <div class="modal-box">
+            <h2>Verify Your Gmail</h2>
+            <p>We've sent a 4-digit verification code to <b id="user-sent-email" style="color: #f59e0b;"></b>.</p>
+            
+            <form onsubmit="handleVerificationSubmit(event)">
+                <input type="text" id="otp-input" placeholder="Enter 4-Digit Code" maxlength="4" required style="text-align: center; letter-spacing: 5px; font-size: 18px;">
+                <button type="submit">Verify & Continue</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- 3. USER DETAILS MODAL -->
+    <div id="details-modal" class="modal-overlay" style="display: none;">
+        <div class="modal-box">
+            <h2>Complete Profile</h2>
+            <p>Set up your basic health stats to personalize your dashboard.</p>
+            <form onsubmit="handleDetailsSubmit(event)">
+                <input type="number" id="user-height" placeholder="Height (cm)" required>
+                <input type="number" id="user-weight" placeholder="Weight (kg)" required>
+                <input type="number" id="user-age" placeholder="Age" required>
+                <input type="text" id="user-sleep" placeholder="Sleep Schedule (e.g. 10 PM - 6 AM)" required>
+                <button type="submit">Save Profile & Enter Dashboard</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- 4. 24-HOUR / CUSTOM TODAY GOAL MODAL -->
+    <div id="goal-modal" class="modal-overlay" style="display: none;">
+        <div class="modal-box">
+            <h2>Set Today's Main Goal 🎯</h2>
+            <p>What is your primary focus for today?</p>
+            <form onsubmit="handleGoalSubmit(event)">
+                <input type="text" id="goal-input" placeholder="e.g. Drink 8 Glasses of Water & Complete Quiz" required>
+                <button type="submit">Set Today Goal</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- SIDEBAR -->
+    <div id="sidebar">
+        <div id="logopic"></div>
+        <div id="company">FOCUS</div>
+        <div id="company2">HUB</div>
+        <div id="link">
+            <a href="#container1" id="nav-dashboard" class="nav-link active">Dashboard</a>
+            <a href="#daily-section" id="nav-habits" class="nav-link">Habit Progress</a>
+            <a href="#tasks-section" id="nav-tasks" class="nav-link">Priority Task</a>
+            <a href="#overview-section" id="nav-overview" class="nav-link">Overview</a>
+        </div>
+        <button onclick="signOutUser()">Sign Out</button>
+    </div>
+
+    <!-- MAIN DASHBOARD CONTENT -->
+    <div id="main">
+        <div class="content-wrapper">
+            <div id="container1">
+                <div id="welcome2">Welcome Back, Buddy!</div>
+                <div id="welcome3"><p>Stay focused in building your good habits everyday.</p></div>
+                <div id="welcome4" onclick="openGoalModal()" style="cursor: pointer;" title="Click to update today's goal">Goal: Stay Hydrated!</div>
+            </div>
+
+            <div id="daily-section">
+                <div id="daily">Daily Habit Progress</div>
+
+                <!-- Healthy Habits Suggestions Container -->
+                <div id="suggestion-box" style="background: #121214; border: 1px solid #27272a; padding: 15px; border-radius: 12px; margin-bottom: 20px; width: 885px;">
+                    <h4 style="color: #f59e0b; margin-bottom: 8px;">💡 Suggested Healthy Habits for You:</h4>
+                    <div id="suggested-pills" style="display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 12px;"></div>
+                    <div style="display: flex; gap: 10px;">
+                        <input type="text" id="custom-habit-name" placeholder="Add custom habit (e.g. Meditate 10 mins)..." style="flex: 1; padding: 8px 12px; background: #18181b; border: 1px solid #27272a; color: white; border-radius: 6px; outline: none; font-size: 13px;">
+                        <button onclick="addCustomHabit()" style="background: #f59e0b; color: #09090b; border: none; padding: 8px 16px; border-radius: 6px; font-weight: 600; cursor: pointer; position: static;">+ Add Habit</button>
+                    </div>
+                </div>
+
+                <!-- Default Habit Grid (Calories replaced with Exercise) -->
+                <div class="habits-grid">
+                    <!-- Container 2 (Drink Water) -->
+                    <div id="container2" class="interactive-card" onclick="addWater()">
+                        <div id="gimage"></div>
+                        <div class="card-info">
+                            <div id="drink">Drink Water</div>
+                            <div id="glass"><span id="water-count">0</span> / 8 Glass</div>
+                        </div>
+                        <div class="progress-track"><div id="bar2"></div></div>
+                    </div>
+
+                    <!-- Container 12 (Exercise for 60 Minutes - In place of Calories) -->
+                    <div id="container12" class="interactive-card" onclick="addExercise()">
+                        <div id="eimage"></div>
+                        <div class="card-info">
+                            <div id="exercise-title">Exercise 60 Mins</div>
+                            <div id="exercise-status"><span id="exercise-count">0</span> / 60 mins</div>
+                        </div>
+                        <div class="progress-track"><div id="bar10"></div></div>
+                    </div>
+
+                    <!-- Container 4 (Read Pages) -->
+                    <div id="container4" class="interactive-card" onclick="addPage()">
+                        <div id="rimage"></div>
+                        <div class="card-info">
+                            <div id="read">Read Pages</div>
+                            <div id="page"><span id="page-count">0</span> / 10 pages</div>
+                        </div>
+                        <div class="progress-track"><div id="bar6"></div></div>
+                    </div>
+
+                    <!-- Container 5 (Walk KM) -->
+                    <div id="container5" class="interactive-card" onclick="addKm()">
+                        <div id="simage"></div>
+                        <div class="card-info">
+                            <div id="walk">Walk Kilometers</div>
+                            <div id="step"><span id="km-count">0.0</span> / 5.0 km</div>
+                        </div>
+                        <div class="progress-track"><div id="bar8"></div></div>
+                    </div>
+                </div>
+
+                <!-- Dynamic Custom Habits Container -->
+                <div id="custom-habits-container" class="habits-grid" style="margin-top: 25px;"></div>
+            </div>
+
+            <!-- Priority Tasks Section -->
+            <div id="tasks-section" class="section-card">
+                <div id="priority">Priority Task</div>
+
+                <div style="display: flex; gap: 10px; width: 100%; margin-bottom: 20px;">
+                    <input type="text" id="new-task-input" placeholder="Enter new priority task..." style="flex: 1; padding: 10px 14px; border-radius: 8px; border: 1px solid #27272a; background: #18181b; color: white; font-size: 14px; outline: none;">
+                    <button type="button" onclick="addNewTask()" style="height: 40px; width: 100px; background: #f59e0b; color: #09090b; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; position: static;">Add Task</button>
+                </div>
+
+                <div id="task-list-container" style="display: flex; flex-direction: column; gap: 12px;"></div>
+            </div>
+
+            <!-- Overview Section -->
+            <div id="overview-section" class="section-card">
+                <div id="overview">Overview</div>
+                <div id="container11">
+                    <div id="streak">Current Streak</div>
+                    <div id="day">7 Days</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
